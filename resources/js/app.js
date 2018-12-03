@@ -20,6 +20,10 @@ let routes = [
     {
         path: '/profile',
         component: require('./components/Profile.vue')
+    },
+    {
+        path: '/users',
+        component: require('./components/Users.vue')
     }
 ];
 
