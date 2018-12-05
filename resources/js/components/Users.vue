@@ -62,12 +62,13 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add New</h5>
+            <h5 class="modal-title" id="exampleModalLabel" v-show="!editmode">Add New</h5>
+            <h5 class="modal-title" id="exampleModalLabel" v-show="editmode">Update User Info</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form @submit.prevent="createUser">
+          <form @submit.prevent="editmode ? updateUser() : createUser()">
             <div class="modal-body">
               <div class="form-group">
                 <input
@@ -131,7 +132,8 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Create</button>
+              <button type="submit" class="btn btn-success" v-show="editmode">Update</button>
+              <button type="submit" class="btn btn-primary" v-show="!editmode">Create</button>
             </div>
           </form>
         </div>
@@ -144,6 +146,7 @@
 export default {
   data() {
     return {
+      editmode: false,
       users: {},
       form: new Form({
         name: "",
@@ -177,6 +180,9 @@ export default {
           this.$Progress.fail();
         });
     },
+    updateUser() {
+      console.log("Update User");
+    },
     loadUsers() {
       axios.get("api/user").then(({ data }) => (this.users = data.data));
     },
@@ -205,10 +211,12 @@ export default {
       });
     },
     newModal() {
+      this.editmode = false;
       this.form.reset();
       $("#addNew").modal("show");
     },
     editModal(user) {
+      this.editmode = true;
       this.form.reset();
       $("#addNew").modal("show");
       this.form.fill(user);
