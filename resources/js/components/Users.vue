@@ -158,7 +158,10 @@ export default {
   methods: {
     createUser() {
       this.$Progress.start();
+
       this.form.post("api/user");
+
+      Fire.$emit("afterCreated");
 
       $("#addNew").modal("hide");
 
@@ -174,7 +177,8 @@ export default {
   },
   created() {
     this.loadUsers();
-    setInterval(() => this.loadUsers(), 3000);
+    // setInterval(() => this.loadUsers(), 3000);
+    Fire.$on("afterCreated", () => this.loadUsers());
   }
 };
 </script>
