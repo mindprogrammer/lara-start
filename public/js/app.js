@@ -68077,32 +68077,43 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   methods: {
     createUser: function createUser() {
+      var _this = this;
+
       this.$Progress.start();
-      this.form.post("api/user");
-      Fire.$emit("afterCreated");
-      $("#addNew").modal("hide");
-      toast({
-        type: "success",
-        title: "User created successfully"
+      this.form.post("api/user").then(function () {
+        Fire.$emit("afterCreated");
+        $("#addNew").modal("hide");
+        toast({
+          type: "success",
+          title: "User created successfully"
+        });
+
+        _this.$Progress.finish();
+      }).catch(function () {
+        toast({
+          type: "error",
+          title: "Failed to create user"
+        });
+
+        _this.$Progress.fail();
       });
-      this.$Progress.finish();
     },
     loadUsers: function loadUsers() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get("api/user").then(function (_ref) {
         var data = _ref.data;
-        return _this.users = data.data;
+        return _this2.users = data.data;
       });
     }
   },
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
     this.loadUsers(); // setInterval(() => this.loadUsers(), 3000);
 
     Fire.$on("afterCreated", function () {
-      return _this2.loadUsers();
+      return _this3.loadUsers();
     });
   }
 });

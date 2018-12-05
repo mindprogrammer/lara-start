@@ -158,18 +158,24 @@ export default {
   methods: {
     createUser() {
       this.$Progress.start();
-
-      this.form.post("api/user");
-
-      Fire.$emit("afterCreated");
-
-      $("#addNew").modal("hide");
-
-      toast({
-        type: "success",
-        title: "User created successfully"
-      });
-      this.$Progress.finish();
+      this.form
+        .post("api/user")
+        .then(() => {
+          Fire.$emit("afterCreated");
+          $("#addNew").modal("hide");
+          toast({
+            type: "success",
+            title: "User created successfully"
+          });
+          this.$Progress.finish();
+        })
+        .catch(() => {
+          toast({
+            type: "error",
+            title: "Failed to create user"
+          });
+          this.$Progress.fail();
+        });
     },
     loadUsers() {
       axios.get("api/user").then(({ data }) => (this.users = data.data));
