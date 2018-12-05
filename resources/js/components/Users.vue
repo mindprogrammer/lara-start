@@ -7,7 +7,7 @@
             <h3 class="card-title">Users Table</h3>
 
             <div class="card-tools">
-              <button class="btn btn-success" data-toggle="modal" data-target="#addNew">
+              <button class="btn btn-success" @click="newModal">
                 Add New
                 <i class="fas fa-user-plus fa-fw"></i>
               </button>
@@ -33,9 +33,9 @@
                   <td>{{user.type | capitalize}}</td>
                   <td>{{user.created_at | dateFormat}}</td>
                   <td>
-                    <a href="#">
+                    <a href="#" @click="editModal(user)">
                       <i class="fas fa-edit blue"></i>
-                    </a> /
+                    </a>&nbsp;&nbsp;&nbsp;
                     <a href="#" @click="deleteUser(user.id)">
                       <i class="fas fa-trash red"></i>
                     </a>
@@ -203,6 +203,15 @@ export default {
             });
         }
       });
+    },
+    newModal() {
+      this.form.reset();
+      $("#addNew").modal("show");
+    },
+    editModal(user) {
+      this.form.reset();
+      $("#addNew").modal("show");
+      this.form.fill(user);
     }
   },
   created() {
