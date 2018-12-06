@@ -70738,6 +70738,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       editmode: false,
       users: {},
       form: new Form({
+        id: "",
         name: "",
         email: "",
         password: "",
@@ -70753,7 +70754,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
       this.$Progress.start();
       this.form.post("api/user").then(function () {
-        Fire.$emit("afterAction");
         $("#addNew").modal("hide");
         toast({
           type: "success",
@@ -70761,6 +70761,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         });
 
         _this.$Progress.finish();
+
+        Fire.$emit("afterAction");
       }).catch(function () {
         toast({
           type: "error",
@@ -70771,18 +70773,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       });
     },
     updateUser: function updateUser() {
-      console.log("Update User");
-    },
-    loadUsers: function loadUsers() {
       var _this2 = this;
 
-      axios.get("api/user").then(function (_ref) {
-        var data = _ref.data;
-        return _this2.users = data.data;
+      this.$Progress.start();
+      this.form.put("api/user/" + this.form.id).then(function () {
+        // Success
+        $("#addNew").modal("hide");
+        swal("Updated!", "Your file has been updated.", "success");
+
+        _this2.$Progress.finish();
+
+        Fire.$emit("afterAction");
+      }).catch(function () {
+        _this2.$Progress.fail();
       });
     },
-    deleteUser: function deleteUser(id) {
+    loadUsers: function loadUsers() {
       var _this3 = this;
+
+      this.$Progress.start();
+      axios.get("api/user").then(function (_ref) {
+        var data = _ref.data;
+        return _this3.users = data.data;
+      });
+      this.$Progress.finish();
+    },
+    deleteUser: function deleteUser(id) {
+      var _this4 = this;
 
       swal({
         title: "Are you sure?",
@@ -70795,7 +70812,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }).then(function (result) {
         // Send request to the server
         if (result.value) {
-          _this3.form.delete("api/user/" + id).then(function () {
+          _this4.form.delete("api/user/" + id).then(function () {
             swal("Deleted!", "Your file has been deleted.", "success");
             Fire.$emit("afterAction");
           }).catch(function () {
@@ -70817,12 +70834,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }
   },
   created: function created() {
-    var _this4 = this;
+    var _this5 = this;
 
     this.loadUsers(); // setInterval(() => this.loadUsers(), 3000);
 
     Fire.$on("afterAction", function () {
-      return _this4.loadUsers();
+      return _this5.loadUsers();
     });
   }
 });
@@ -70845,7 +70862,14 @@ var render = function() {
             _c("div", { staticClass: "card-tools" }, [
               _c(
                 "button",
-                { staticClass: "btn btn-success", on: { click: _vm.newModal } },
+                {
+                  staticClass: "btn btn-success",
+                  on: {
+                    click: function($event) {
+                      _vm.newModal()
+                    }
+                  }
+                },
                 [
                   _vm._v("\n              Add New\n              "),
                   _c("i", { staticClass: "fas fa-user-plus fa-fw" })

@@ -7,7 +7,7 @@
             <h3 class="card-title">Users Table</h3>
 
             <div class="card-tools">
-              <button class="btn btn-success" @click="newModal">
+              <button class="btn btn-success" @click="newModal()">
                 Add New
                 <i class="fas fa-user-plus fa-fw"></i>
               </button>
@@ -149,6 +149,7 @@ export default {
       editmode: false,
       users: {},
       form: new Form({
+        id: "",
         name: "",
         email: "",
         password: "",
@@ -164,13 +165,13 @@ export default {
       this.form
         .post("api/user")
         .then(() => {
-          Fire.$emit("afterAction");
           $("#addNew").modal("hide");
           toast({
             type: "success",
             title: "User created successfully"
           });
           this.$Progress.finish();
+          Fire.$emit("afterAction");
         })
         .catch(() => {
           toast({
@@ -181,10 +182,25 @@ export default {
         });
     },
     updateUser() {
-      console.log("Update User");
+      this.$Progress.start();
+
+      this.form
+        .put("api/user/" + this.form.id)
+        .then(() => {
+          // Success
+          $("#addNew").modal("hide");
+          swal("Updated!", "Your file has been updated.", "success");
+          this.$Progress.finish();
+          Fire.$emit("afterAction");
+        })
+        .catch(() => {
+          this.$Progress.fail();
+        });
     },
     loadUsers() {
+      this.$Progress.start();
       axios.get("api/user").then(({ data }) => (this.users = data.data));
+      this.$Progress.finish();
     },
     deleteUser(id) {
       swal({
